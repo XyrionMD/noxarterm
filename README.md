@@ -1,12 +1,20 @@
-# 🛡️ NoxarTerm Remastered
+<p align="center">
+  <img src="doc/icon.jpg" width="120" alt="NoxarTerm Remastered Icon">
+</p>
 
-![NoxarTerm Remastered Icon](doc/icon.jpg)
+<h1 align="center">🛡️ NoxarTerm Remastered</h1>
 
-[[License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](COPYING)
-[[Platform: Android](https://img.shields.io/badge/Platform-Android-3DDC84?logo=android&logoColor=white)](https://www.android.com)
-[[Fork of Tiny Container](https://img.shields.io/badge/Fork%20of-Tiny%20Container-orange)](https://github.com/cateners/tiny_container)
-[[Version](https://img.shields.io/badge/Version-Remastered-purple)](../../releases)
-[[Linux](https://img.shields.io/badge/Linux-Terminal-black?logo=linux&logoColor=white)](#)
+<p align="center">
+  <a href="COPYING"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPL v3"></a>
+  <a href="https://www.android.com"><img src="https://img.shields.io/badge/Platform-Android-3DDC84?logo=android&logoColor=white" alt="Platform: Android"></a>
+  <a href="https://github.com/cateners/tiny_container"><img src="https://img.shields.io/badge/Fork%20of-Tiny%20Container-orange" alt="Fork of Tiny Container"></a>
+  <a href="../../releases"><img src="https://img.shields.io/badge/Version-Remastered-purple" alt="Version"></a>
+  <a href="#"><img src="https://img.shields.io/badge/Linux-Terminal-black?logo=linux&logoColor=white" alt="Linux"></a>
+</p>
+
+<p align="center">
+  <b>NoxarTerm Remastered</b> is a powerful and lightweight Linux environment for Android, designed to bring a full terminal experience to your mobile device.
+</p>
 
 **NoxarTerm Remastered** is a powerful and lightweight Linux environment for Android, designed to bring a full terminal experience to your mobile device.
 
