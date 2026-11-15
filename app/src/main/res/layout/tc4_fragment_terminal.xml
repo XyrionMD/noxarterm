@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<eightbitlab.com.blurview.BlurView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/blurView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true">
+
+        <LinearLayout
+            android:id="@+id/linux_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.offsec.nhterm.frontend.session.view.TerminalView
+                android:id="@+id/terminal_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
+
+            <LinearLayout
+                android:id="@+id/extra_keys_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorSurfaceVariant"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.offsec.nhterm.frontend.session.view.extrakey.ExtraKeysView
+                    android:id="@+id/extra_keys"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingEnd="4dp">
+
+                    <ImageButton
+                        android:id="@+id/btn_to_adb"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/tc4_terminal_mode_adb"
+                        android:padding="2dp"
+                        android:src="@drawable/terminal_24dp_1f1f1f_fill0_wght400_grad0_opsz24"
+                        app:tint="?attr/colorOnSurfaceVariant" />
+
+                    <ImageButton
+                        android:id="@+id/btn_hide_extra_keys"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/tc4_terminal_toggle_toolbar"
+                        android:padding="2dp"
+                        android:src="@drawable/keyboard_double_arrow_down_24dp_1f1f1f_fill0_wght400_grad0_opsz24"
+                        app:tint="?attr/colorOnSurfaceVariant" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/adb_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FF000000"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ScrollView
+                android:id="@+id/adb_output_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="#FF000000"
+                android:fillViewport="true">
+                <TextView
+                    android:id="@+id/adb_output"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#FF000000"
+                    android:fontFamily="monospace"
+                    android:padding="8dp"
+                    android:textColor="#FFFFFF"
+                    android:textIsSelectable="true"
+                    android:textSize="12sp" />
+            </ScrollView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FF000000"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <EditText
+                    android:id="@+id/adb_input"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="#66FFFFFF"
+                    android:hint="@string/tc4_terminal_adb_hint"
+                    android:imeOptions="actionSend"
+                    android:inputType="text"
+                    android:maxLines="4"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#99FFFFFF" />
+
+                <ImageButton
+                    android:id="@+id/adb_clear"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/tc4_terminal_adb_clear"
+                    android:padding="6dp"
+                    android:src="@drawable/delete_forever_24dp_1f1f1f_fill0_wght400_grad0_opsz24"
+                    app:tint="#FFFFFF" />
+
+                <ImageButton
+                    android:id="@+id/adb_send"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/tc4_terminal_adb_send"
+                    android:padding="6dp"
+                    android:src="@drawable/play_arrow_24dp_1f1f1f_fill0_wght400_grad0_opsz24"
+                    app:tint="#FFFFFF" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/floating_controls"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="96dp"
+            android:visibility="gone"
+            app:cardBackgroundColor="#FF1C1C1C"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp">
+
+                <TextView
+                    android:id="@+id/floating_hint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="2dp"
+                    android:text="@string/tc4_terminal_swipe_hint"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="10sp" />
+
+                <ImageButton
+                    android:id="@+id/btn_floating_toggle"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/tc4_terminal_toggle_toolbar"
+                    android:padding="6dp"
+                    android:src="@drawable/keyboard_double_arrow_up_24dp_1f1f1f_fill0_wght400_grad0_opsz24"
+                    app:tint="#FFFFFFFF" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </FrameLayout>
+
+</eightbitlab.com.blurview.BlurView>

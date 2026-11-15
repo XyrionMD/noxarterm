@@ -169,6 +169,27 @@
 
     <!-- ==================== Terminal ==================== -->
     <string name="tc4_terminal_no_session">No Session</string>
+    <string name="tc4_terminal_fullscreen_on">Terminal fullscreen</string>
+    <string name="tc4_terminal_toggle_toolbar">Toggle extra keys toolbar</string>
+    <string name="tc4_terminal_mode_linux">Linux</string>
+    <string name="tc4_terminal_mode_adb">ADB (Shizuku)</string>
+    <string name="tc4_terminal_mode_linux_desc">Linux container shell (proot)</string>
+    <string name="tc4_terminal_mode_adb_desc">Run commands via Shizuku (ADB/shell privilege)</string>
+    <string name="tc4_terminal_adb_hint">Enter ADB/shell command…</string>
+    <string name="tc4_terminal_adb_send">Run</string>
+    <string name="tc4_terminal_adb_clear">Clear screen</string>
+    <string name="tc4_terminal_shizuku_unavailable">Shizuku not available or permission not granted</string>
+    <string name="tc4_terminal_shizuku_request">Request Shizuku permission</string>
+    <string name="tc4_terminal_swipe_hint">← ADB | tap: keys</string>
+    <string name="tc4_terminal_swipe_hint_adb">Linux → | ADB mode</string>
+
+    <!-- ==================== Keep Alive / Wake Lock ==================== -->
+    <string name="tc4_keep_alive_channel_name">Keep Alive</string>
+    <string name="tc4_keep_alive_channel_desc">Keeps the container session active and prevents the system from killing it</string>
+    <string name="tc4_keep_alive_notification_title">NoxarTerm Remastered is running</string>
+    <string name="tc4_keep_alive_notification_text">Wake lock active to keep the session alive</string>
+    <string name="tc4_keep_alive_shizuku_granted">Shizuku privilege applied for better keep-alive</string>
+    <string name="tc4_keep_alive_shizuku_failed">Shizuku privilege request failed: %1$s</string>
 
     <!-- ==================== Import Files ==================== -->
     <string name="tc4_import_file_label">Import to Public Folder</string>

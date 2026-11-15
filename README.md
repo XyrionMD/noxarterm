@@ -20,12 +20,14 @@ NoxarTerm Remastered is a specialized fork of [Tiny Container](https://github.co
 
 ## ✨ What’s Different in Remastered?
 
-This is not just a rebrand. The biggest change is in the terminal itself:
+This is not just a rebrand. The biggest changes are in the terminal experience:
 
 - **JetBrains Mono Nerd Font Semi Bold** as the default terminal font.
 - Full **Nerd Font** support, so icons, glyphs, and symbols from tools like `neofetch`, `yazi`, `lazygit`, `starship`, `tmux`, `oh-my-posh`, and other modern CLI tools render correctly, no more `□` / `?` boxes.
 - Bolder, sharper, and more readable text for long terminal sessions.
 - Revamped terminal UI and optimized menus for a cleaner, more modern look.
+- **New ADB Terminal (via Shizuku):** Run ADB/shell commands directly inside the app. This feature **requires Shizuku to be installed, running, and granted permission**. If Shizuku is unavailable or not active, the ADB terminal cannot be used.
+- **Extra Keys fixes and improvements:** The extra keys bar has been refined for a cleaner layout and more reliable controls during terminal sessions.
 
 If you use a fancy prompt, file manager, or TUI app, you will immediately see the difference.
 
@@ -57,6 +59,8 @@ The Parrot rootfs here are **not heavily customized**, they are just stock Parro
 
 - 🐧 **Linux on Android:** Run a full Linux environment directly on your Android device.
 - 🎨 **Enhanced Terminal UI:** A redesigned terminal interface for better aesthetics and readability.
+- ⌨️ **Improved Extra Keys:** A refined extra keys bar with a cleaner layout and more reliable controls.
+- 📟 **ADB Terminal (Shizuku):** Run ADB/shell commands from within the app. **Requires Shizuku to be installed, active, and granted permission**; if Shizuku is unavailable or inactive, this feature cannot be used.
 - 🛠️ **Optimized Menus:** Streamlined and intuitive navigation for faster access to tools.
 - 🐛 **Bug Fixes & Patches:** Many stability and usability issues from the original version have been addressed.
 - 🚀 **High Performance:** Optimized to run efficiently on mobile hardware.

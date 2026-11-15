@@ -30,7 +30,7 @@ android {
         minSdk = 28
         targetSdk = 37
         versionCode = 1
-        versionName = "1.0.0"
+        versionName = "1.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         ndk {
             abiFilters.add("arm64-v8a")
@@ -86,6 +86,8 @@ dependencies {
     implementation(libs.coil.svg)
     implementation(libs.avnc)
     implementation(libs.termux.x11)
+    implementation(libs.shizuku.api)
+    implementation(libs.shizuku.provider)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
