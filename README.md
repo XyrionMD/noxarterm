@@ -124,6 +124,10 @@ Then import it in the app via the **Import** button.
 
 ---
 
+> **Tip:**
+> - Swipe right to exit ADB Terminal and return to the Linux Terminal.
+> - If the terminal is hidden, swipe left to open ADB Terminal.
+
 ## 📜 Credits & Origin
 
 NoxarTerm Remastered is proudly built upon the foundation of **Tiny Container**.
