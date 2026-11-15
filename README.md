@@ -1,14 +1,21 @@
-# 🛡️ NoxarTerm Remastered
 
-![NoxarTerm Remastered Icon](doc/icon.jpg)
+<p align="center">
+  <img src="doc/icon.jpg" width="120" alt="NoxarTerm Remastered Icon">
+</p>
 
-[[License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](COPYING)
-[[Platform: Android](https://img.shields.io/badge/Platform-Android-3DDC84?logo=android&logoColor=white)](https://www.android.com)
-[[Fork of Tiny Container](https://img.shields.io/badge/Fork%20of-Tiny%20Container-orange)](https://github.com/cateners/tiny_container)
-[[Version](https://img.shields.io/badge/Version-Remastered-purple)](../../releases)
-[[Linux](https://img.shields.io/badge/Linux-Terminal-black?logo=linux&logoColor=white)](#)
+<h1 align="center">🛡️ NoxarTerm Remastered</h1>
 
-**NoxarTerm Remastered** is a powerful and lightweight Linux environment for Android, designed to bring a full terminal experience to your mobile device.
+<p align="center">
+  <a href="COPYING"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPL v3"></a>
+  <a href="https://www.android.com"><img src="https://img.shields.io/badge/Platform-Android-3DDC84?logo=android&logoColor=white" alt="Platform: Android"></a>
+  <a href="https://github.com/cateners/tiny_container"><img src="https://img.shields.io/badge/Fork%20of-Tiny%20Container-orange" alt="Fork of Tiny Container"></a>
+  <a href="../../releases"><img src="https://img.shields.io/badge/Version-1.1.0-purple" alt="Version 1.1.0"></a>
+  <a href="#"><img src="https://img.shields.io/badge/Linux-Terminal-black?logo=linux&logoColor=white" alt="Linux"></a>
+</p>
+
+<p align="center">
+  <b>NoxarTerm Remastered</b> is a powerful and lightweight Linux environment for Android, designed to bring a full terminal experience to your mobile device.
+</p>
 
 NoxarTerm Remastered is a specialized fork of [Tiny Container](https://github.com/cateners/tiny_container) by **cateners**, with a completely revamped terminal UI, optimized menu systems, and critical bug fixes for a smoother, more modern experience.
 
@@ -35,23 +42,19 @@ If you use a fancy prompt, file manager, or TUI app, you will immediately see th
 
 ## 🐦 Choose Your Rootfs
 
-The app is the same, you just pick which rootfs you want to import. You are free to choose:
+> [!NOTE]
+> **Starting from v1.1.0, NoxarTerm Remastered no longer provides its own rootfs in Releases.**
+> Please download your rootfs from the official Tiny Container images repo instead.
 
 | Rootfs | From | Best For |
 | :--- | :--- | :--- |
-| **Parrot + Openbox** | This repo (Releases) | Desktop experience, GUI apps, Parrot tools |
-| **Parrot CLI Only** | This repo (Releases) | Lightweight, fast, terminal purist |
 | **Debian** | [tiny-computer/images](https://github.com/tiny-computer/images/releases) | Stock Debian from Tiny Container, clean & stable |
-
-The Parrot rootfs here are **not heavily customized**, they are just stock Parrot with a few useful apps **preinstalled** so you don't have to set everything up from scratch.
 
 > Just download the one you want, import it in the app, and you're good to go. No need to reinstall the app to switch.
 
 ### Which one should I choose?
 
-- **Pick Parrot + Openbox** if you want Parrot + desktop, GUI apps, and hacking tools ready to go.
-- **Pick Parrot CLI Only** if you want Parrot but the lightest and fastest experience. Best match for the new Nerd Font terminal.
-- **Pick Debian from Tiny Container** if you want the original clean Debian experience from the upstream project.
+- **Pick Debian from Tiny Container** if you want the original clean Debian experience from the upstream project. This is the recommended rootfs for v1.1.0 and later.
 
 ---
 
@@ -86,13 +89,12 @@ Explore the new look and feel of NoxarTerm Remastered:
 2. Download the latest `.apk` from the [Releases](../../releases) section.
 3. Enable **"Install from Unknown Sources"** in your Android device settings.
 4. Install the APK and launch **NoxarTerm Remastered**.
-5. **Pick your rootfs:** Download Parrot from this repo, or Debian from Tiny Container, then import it via the import button in the app.
+5. **Pick your rootfs:** Download Debian from Tiny Container, then import it via the import button in the app.
 
 ### Installing a Rootfs
 
 You can get a rootfs from:
 
-- **Parrot (from me):** The **Releases** page of this repo — Parrot Openbox or Parrot CLI Only, with some apps preinstalled.
 - **Debian (from Tiny Container):** [https://github.com/tiny-computer/images/releases](https://github.com/tiny-computer/images/releases) — stock Debian images from the upstream project.
 
 Then import it in the app via the **Import** button.
@@ -100,7 +102,7 @@ Then import it in the app via the **Import** button.
 > [!CAUTION]
 > **Only install rootfs from trusted sources!**
 > A rootfs runs with full Linux privileges inside your container. Do NOT download rootfs from random links, random Telegram groups, random YouTube descriptions, or strangers. A malicious rootfs can steal your files, credentials, and data.
-> Stick to this repo and the official [tiny-computer/images](https://github.com/tiny-computer/images/releases) releases only.
+> Stick to the official [tiny-computer/images](https://github.com/tiny-computer/images/releases) releases only.
 
 ### How It Works
 
@@ -128,7 +130,6 @@ NoxarTerm Remastered is proudly built upon the foundation of **Tiny Container**.
 
 - **Original Project:** [Tiny Container](https://github.com/cateners/tiny_container) by **cateners**.
 - **NoxarTerm Remastered Fork:** Developed to enhance the terminal UI and overall user experience.
-- **Parrot OS:** Parrot OS is a third-party Linux distribution used as the container base in the provided rootfs. It is not owned or created by this project.
 - **Debian Images:** Debian rootfs images are provided by the upstream project at [tiny-computer/images](https://github.com/tiny-computer/images/releases).
 
 ---
@@ -141,4 +142,4 @@ See the [COPYING](COPYING) file in the root directory for the full license text.
 
 NoxarTerm Remastered is a fork of Tiny Container, and as such, it remains under the same GPL-3.0 license as the original project.
 
-> **Note on rootfs:** No custom Linux license is needed for this project. The Parrot rootfs provided are stock Parrot with some apps preinstalled, and they follow their respective upstream open-source licenses. NoxarTerm Remastered itself is licensed under GPL-3.0 as stated above.
+> **Note on rootfs:** No custom Linux license is needed for this project. The rootfs provided by Tiny Container follow their respective upstream open-source licenses. NoxarTerm Remastered itself is licensed under GPL-3.0 as stated above.
