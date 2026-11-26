@@ -1,20 +1,3 @@
-// Global.kt -- This file is part of tiny_container.
-//
-// Copyright (C) 2026 Caten Hu
-//
-// Tiny Container is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published
-// by the Free Software Foundation, either version 3 of the License,
-// or any later version.
-//
-// Tiny Container is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty
-// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-// See the GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see http://www.gnu.org/licenses/.
-
 package com.fct.tc4.ui.misc
 
 import android.app.Application
@@ -26,22 +9,25 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
-import com.offsec.nhterm.backend.TerminalSession
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import android.util.Log
 import androidx.core.content.edit
 import coil.Coil
 import coil.ImageLoader
 import coil.decode.SvgDecoder
+import com.termux.terminal.TerminalSession
+import com.termux.terminal.TerminalSessionClient
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import java.io.File
 
 object Global {
+    private const val LOG_TAG = "NoxarTerm"
+
     /**
      * auto_launch = "xfce"
      * installed_containers = ["xfce", "lxqt", ...]
-     *
-     * */
+     */
     lateinit var sharedPrefs: SharedPreferences
 
     var terminalFontSize: Int
@@ -85,35 +71,30 @@ object Global {
     var terminalSession: TerminalSession? = null
         private set
 
-
     var onSessionSignal9: (() -> Unit)? = null
 
     private val _screenUpdateEvent = MutableSharedFlow<Unit>(extraBufferCapacity = 64)
     val screenUpdateEvent: SharedFlow<Unit> = _screenUpdateEvent.asSharedFlow()
 
-    private val defaultSessionCallback = object : TerminalSession.SessionChangedCallback {
-        override fun onTextChanged(changedSession: TerminalSession?) {
+    private open class BaseSessionClient : TerminalSessionClient {
+        override fun onTextChanged(changedSession: TerminalSession) {
             _screenUpdateEvent.tryEmit(Unit)
         }
 
-        override fun onColorsChanged(session: TerminalSession?) {
+        override fun onTitleChanged(changedSession: TerminalSession) {}
+
+        override fun onSessionFinished(finishedSession: TerminalSession) {
             _screenUpdateEvent.tryEmit(Unit)
         }
 
-        override fun onTitleChanged(changedSession: TerminalSession?) {}
-
-        override fun onSessionFinished(finishedSession: TerminalSession?) {
-            _screenUpdateEvent.tryEmit(Unit)
+        override fun onCopyTextToClipboard(session: TerminalSession, text: String) {
+            val clipboard = appContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            clipboard.setPrimaryClip(ClipData.newPlainText("terminal", text))
         }
 
-        override fun onClipboardText(session: TerminalSession?, text: String?) {
-            if (text != null) {
-                val clipboard = appContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                clipboard.setPrimaryClip(ClipData.newPlainText("terminal", text))
-            }
-        }
+        override fun onPasteTextFromClipboard(session: TerminalSession?) {}
 
-        override fun onBell(session: TerminalSession?) {
+        override fun onBell(session: TerminalSession) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 (appContext.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager).defaultVibrator
             } else {
@@ -121,14 +102,37 @@ object Global {
                 appContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
             }.vibrate(VibrationEffect.createOneShot(300, 255))
         }
+
+        override fun onColorsChanged(session: TerminalSession) {
+            _screenUpdateEvent.tryEmit(Unit)
+        }
+
+        override fun onTerminalCursorStateChange(state: Boolean) {}
+
+        override fun setTerminalShellPid(session: TerminalSession, pid: Int) {}
+
+        override fun getTerminalCursorStyle(): Int? = null
+
+        override fun logError(tag: String?, message: String?) { Log.e(tag ?: LOG_TAG, message ?: "") }
+        override fun logWarn(tag: String?, message: String?) { Log.w(tag ?: LOG_TAG, message ?: "") }
+        override fun logInfo(tag: String?, message: String?) { Log.i(tag ?: LOG_TAG, message ?: "") }
+        override fun logDebug(tag: String?, message: String?) { Log.d(tag ?: LOG_TAG, message ?: "") }
+        override fun logVerbose(tag: String?, message: String?) { Log.v(tag ?: LOG_TAG, message ?: "") }
+        override fun logStackTraceWithMessage(tag: String?, message: String?, e: Exception?) {
+            Log.e(tag ?: LOG_TAG, message ?: "", e)
+        }
+        override fun logStackTrace(tag: String?, e: Exception?) {
+            Log.e(tag ?: LOG_TAG, "Stack trace", e)
+        }
     }
+
+    private val defaultSessionClient = BaseSessionClient()
 
     fun init(context: Context) {
         appContext = context.applicationContext
 
         // 非主进程（:xserver）不需要 shell/symlink/bootstrap
         if (Application.getProcessName() != appContext.packageName) return
-
 
         val imageLoader = ImageLoader.Builder(appContext)
             .components {
@@ -137,19 +141,16 @@ object Global {
             .build()
         Coil.setImageLoader(imageLoader)
 
-        TerminalSession.setResources(appContext.resources)
-
         sharedPrefs = appContext.getSharedPreferences("tc4", Context.MODE_PRIVATE)
-		val currentVersionCode = try {
-			val info = appContext.packageManager.getPackageInfo(appContext.packageName, 0)
-			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-        		info.longVersionCode.toInt()
-    		} else {
-        		@Suppress("DEPRECATION")
-        		info.versionCode
-    		}
-		} catch (_: Exception) { 0 }
-
+        val currentVersionCode = try {
+            val info = appContext.packageManager.getPackageInfo(appContext.packageName, 0)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                info.longVersionCode.toInt()
+            } else {
+                @Suppress("DEPRECATION")
+                info.versionCode
+            }
+        } catch (_: Exception) { 0 }
 
         if (lastVersionCode != currentVersionCode) {
             shouldResetBootstrap = true
@@ -163,7 +164,6 @@ object Global {
         setNativeLibraryPath()
         cleanTmpFiles()
         setupBootstrapIfRequired()
-
     }
 
     fun newSession(
@@ -172,48 +172,54 @@ object Global {
         env: Array<String>? = null,
         onFinished: ((exitCode: Int) -> Unit)? = null
     ): TerminalSession {
-        val callback = if (onFinished != null) {
-            object : TerminalSession.SessionChangedCallback by defaultSessionCallback {
-                override fun onSessionFinished(finishedSession: TerminalSession?) {
-                    defaultSessionCallback.onSessionFinished(finishedSession)
-                    onFinished(finishedSession?.exitStatus ?: -1)
+        val client = if (onFinished != null) {
+            object : BaseSessionClient() {
+                override fun onSessionFinished(finishedSession: TerminalSession) {
+                    super.onSessionFinished(finishedSession)
+                    onFinished(finishedSession.exitStatus)
                 }
             }
         } else {
-            defaultSessionCallback
+            defaultSessionClient
         }
+
         val session = TerminalSession(
             shellPath,
             appContext.dataDir.absolutePath,
             args, env,
-            callback
+            2000,
+            client
         )
-        session.updateSize(80, 24)
+        // Termux session initializes emulator on first size update with cell metrics.
+        // Use a small default cell size; TerminalView will update with real metrics when attached.
+        session.updateSize(80, 24, 8, 16)
         terminalSession = session
         return session
     }
 
-    fun setupEnvironment(){
+    fun setupEnvironment() {
         listOf("tmp", "run", "proot_tmp").forEach { dir ->
             File(appContext.filesDir, dir).apply {
                 if (exists()) deleteRecursively()
                 mkdirs()
             }
         }
-        sendCommand($$"""
-            export BIN_DIR=$${appContext.filesDir.absolutePath}/bootstrap/bin
-            export PUBLIC_DIR=$${appContext.filesDir.absolutePath}/public
-            export CACHE_DIR=$${appContext.filesDir.absolutePath}
-            export PATH=$BIN_DIR:$PATH
-            export LD_LIBRARY_PATH=$${appContext.filesDir.absolutePath}/bootstrap/lib:$LD_LIBRARY_PATH
-            export PROOT_LOADER=$${appContext.filesDir.absolutePath}/applib/libproot-loader-aarch64-5.1.107-68.so
-            export PROOT_LOADER_32=$${appContext.filesDir.absolutePath}/applib/libproot-loader32-aarch64-5.1.107-68.so
-            export PROOT_TMP_DIR=$CACHE_DIR/proot_tmp
-            mkdir -p $CACHE_DIR/tmp
-            mkdir -p $CACHE_DIR/run
-            mkdir -p $PROOT_TMP_DIR
-            mkdir -p $PUBLIC_DIR
-        """.trimIndent())
+        sendCommand(
+            """
+            export BIN_DIR=${appContext.filesDir.absolutePath}/bootstrap/bin
+            export PUBLIC_DIR=${appContext.filesDir.absolutePath}/public
+            export CACHE_DIR=${appContext.filesDir.absolutePath}
+            export PATH=${'$'}BIN_DIR:${'$'}PATH
+            export LD_LIBRARY_PATH=${appContext.filesDir.absolutePath}/bootstrap/lib:${'$'}LD_LIBRARY_PATH
+            export PROOT_LOADER=${appContext.filesDir.absolutePath}/applib/libproot-loader-aarch64-5.1.107-68.so
+            export PROOT_LOADER_32=${appContext.filesDir.absolutePath}/applib/libproot-loader32-aarch64-5.1.107-68.so
+            export PROOT_TMP_DIR=${'$'}CACHE_DIR/proot_tmp
+            mkdir -p ${'$'}CACHE_DIR/tmp
+            mkdir -p ${'$'}CACHE_DIR/run
+            mkdir -p ${'$'}PROOT_TMP_DIR
+            mkdir -p ${'$'}PUBLIC_DIR
+            """.trimIndent()
+        )
     }
 
     fun sendCommand(command: String) {
@@ -223,10 +229,12 @@ object Global {
     }
 
     fun setNativeLibraryPath() {
-        sendCommand("""
+        sendCommand(
+            """
             rm -rf ${appContext.filesDir.absolutePath}/applib
             ln -sf ${appContext.applicationInfo.nativeLibraryDir} ${appContext.filesDir.absolutePath}/applib
-        """.trimIndent())
+            """.trimIndent()
+        )
     }
 
     fun cleanTmpFiles() {
@@ -271,10 +279,12 @@ object Global {
                 ln -sf ${appContext.filesDir.absolutePath}/applib/lib__opt__virglrenderer-android__lib__libepoxy.so__.so ${appContext.filesDir.absolutePath}/bootstrap/lib/libepoxy.so
             """.trimIndent()
 
-            sendCommand("""
+            sendCommand(
+                """
                 $setupExecutables
                 $setupLibraries
-            """.trimIndent())
+                """.trimIndent()
+            )
             shouldResetBootstrap = false
         }
     }

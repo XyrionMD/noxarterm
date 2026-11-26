@@ -98,11 +98,11 @@
         "url": "https://github.com/Kotlin/kotlinx.coroutines"
     },
     {
-        "name": "neoterm (terminal-lib)",
-        "author": "Offensive Security",
-        "description": "终端 PTY 后端 JNI 库，管理 shell 会话的伪终端子进程",
+        "name": "Termux terminal-emulator & terminal-view",
+        "author": "Termux",
+        "description": "Terminal emulation engine and terminal view used for PTY/session rendering in NoxarTerm",
         "license": "GPL-3.0",
-        "url": "https://gitlab.com/kalilinux/nethunter/apps/kali-nethunter-term"
+        "url": "https://github.com/termux/termux-app"
     },
     {
         "name": "BusyBox",

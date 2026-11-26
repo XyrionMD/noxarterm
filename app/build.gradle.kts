@@ -24,13 +24,14 @@ android {
     compileSdk {
         version = release(37)
     }
+    ndkVersion = "27.2.12479018"
 
     defaultConfig {
         applicationId = "com.fct.tc4"
         minSdk = 28
         targetSdk = 37
-        versionCode = 1
-        versionName = "1.1.0"
+        versionCode = 2
+        versionName = "1.2.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         ndk {
             abiFilters.add("arm64-v8a")
@@ -67,7 +68,7 @@ android {
 }
 
 dependencies {
-    implementation(libs.terminal.lib)
+    implementation(project(":terminal-view"))
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)

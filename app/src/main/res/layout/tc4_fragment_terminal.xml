@@ -17,7 +17,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <com.offsec.nhterm.frontend.session.view.TerminalView
+            <com.termux.view.TerminalView
                 android:id="@+id/terminal_view"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -33,7 +33,7 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <com.offsec.nhterm.frontend.session.view.extrakey.ExtraKeysView
+                <com.fct.tc4.ui.misc.TermuxExtraKeysView
                     android:id="@+id/extra_keys"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

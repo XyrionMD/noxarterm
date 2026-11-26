@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
 
             if (viewModel.isTerminalOpen.value) {
                 // Keep terminal fullscreen but reserve space for IME when visible
-                v.setPadding(0, 0, 0, if (imeVisible) 0 else 0)
+                v.setPadding(0, 0, 0, 0)
             } else {
                 v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             }
@@ -71,6 +71,7 @@ class MainActivity : AppCompatActivity() {
             // Lift terminal overlay above keyboard (avoid being covered)
             val bottomInset = if (imeVisible) imeInsets.bottom else 0
             binding.wiper.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                topMargin = 0
                 bottomMargin = bottomInset
             }
             ViewCompat.dispatchApplyWindowInsets(binding.wiper, insets)

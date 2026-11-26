@@ -18,10 +18,15 @@
 package com.fct.tc4.ui.page
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Intent
+import android.os.Build
 import android.system.Os
 import android.system.OsConstants
 import android.util.Log
+import androidx.core.app.NotificationCompat
 import com.termux.x11.CmdEntryPointService
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
@@ -36,6 +41,7 @@ import com.fct.tc4.ui.misc.ConfigManager
 import com.fct.tc4.ui.misc.Global
 import com.fct.tc4.ui.misc.UpdateChecker
 import com.fct.tc4.ui.misc.UpdateResult
+import com.fct.tc4.ui.main.MainActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -179,16 +185,18 @@ class ContainerMainViewModel(
 
     private fun setupEnvironment() {
         val app = getApplication<Application>()
+        // Clear before killing the old session: finishIfRunning() sends SIGKILL,
+        // and that intentional -9 must not be misreported as a phantom/signal-9 crash.
+        Global.onSessionSignal9 = null
         Global.terminalSession?.finishIfRunning()
-        Global.newSession(onFinished = { exitCode ->
-            if (exitCode == -9) {
+        var newSessionRef: com.termux.terminal.TerminalSession? = null
+        newSessionRef = Global.newSession(onFinished = { exitCode ->
+            if (exitCode == -9 && Global.terminalSession === newSessionRef) {
                 Global.onSessionSignal9?.invoke()
             }
         })
         Global.onSessionSignal9 = {
-            val intent = Intent(getApplication(), Signal9Activity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            getApplication<Application>().startActivity(intent)
+            showSignal9Notification()
         }
         Global.setupEnvironment()
         val containerDir = "${app.dataDir.absolutePath}/$code"
@@ -573,6 +581,35 @@ class ContainerMainViewModel(
         return false
     }
 
+
+    private fun showSignal9Notification() {
+        val app = getApplication<Application>()
+        val channelId = "tc4_signal9"
+        val nm = app.getSystemService(NotificationManager::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId,
+                app.getString(R.string.tc4_signal9_notif_title),
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            nm.createNotificationChannel(channel)
+        }
+        val intent = Intent(app, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+        val pi = PendingIntent.getActivity(
+            app, 0, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val notif = NotificationCompat.Builder(app, channelId)
+            .setSmallIcon(R.drawable.terminal_24dp_1f1f1f_fill0_wght400_grad0_opsz24)
+            .setContentTitle(app.getString(R.string.tc4_signal9_notif_title))
+            .setContentText(app.getString(R.string.tc4_signal9_notif_text))
+            .setContentIntent(pi)
+            .setAutoCancel(true)
+            .build()
+        nm.notify(1009, notif)
+    }
 
     fun saveConfig() {
         ConfigManager.save(code, config)

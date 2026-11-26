@@ -325,6 +325,9 @@ Java_com_fct_tc4_TinyAudio_nativeStart(JNIEnv *env, jclass cls, jstring sp)
     if (pthread_create(&g.sock_thread, NULL, sock_func, NULL)) {
         close(g.sock_fd); g.sock_fd = -1; return JNI_FALSE;
     }
+    /* Block until the socket thread exits (disconnect or nativeStop).
+     * This allows the Java side to implement continuous auto-reconnect. */
+    pthread_join(g.sock_thread, NULL);
     return JNI_TRUE;
 }
 
@@ -334,5 +337,5 @@ Java_com_fct_tc4_TinyAudio_nativeStop(JNIEnv *env, jclass cls)
     (void)env; (void)cls;
     atomic_store_explicit(&g.running, false, memory_order_release);
     if (g.sock_fd >= 0) { shutdown(g.sock_fd, SHUT_RDWR); close(g.sock_fd); g.sock_fd = -1; }
-    pthread_join(g.sock_thread, NULL);
+    /* nativeStart joins the socket thread before returning. */
 }

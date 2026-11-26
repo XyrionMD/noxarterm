@@ -18,7 +18,7 @@ coil = "2.7.0"
 avnc = "030e6c032e"
 termuxX11 = "21159a1405"
 coreAnimation = "1.0.0"
-terminalLib = "e7a15b7877"
+shizuku = "13.1.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -42,9 +42,12 @@ coil-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coil" }
 avnc = { group = "com.github.tiny-computer", name = "avnc", version.ref = "avnc" }
 termux-x11 = { group = "com.github.tiny-computer", name = "termux-x11", version.ref = "termuxX11" }
 androidx-core-animation = { group = "androidx.core", name = "core-animation", version.ref = "coreAnimation" }
-terminal-lib = { group = "com.github.tiny-computer", name = "terminal-lib", version.ref = "terminalLib" }
+androidx-annotation = { group = "androidx.annotation", name = "annotation", version = "1.9.0" }
+shizuku-api = { group = "dev.rikka.shizuku", name = "api", version.ref = "shizuku" }
+shizuku-provider = { group = "dev.rikka.shizuku", name = "provider", version.ref = "shizuku" }
 
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
 

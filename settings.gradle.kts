@@ -39,3 +39,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "NoxarTerm Remastered"
 include(":app")
+include(":terminal-emulator")
+include(":terminal-view")

@@ -105,6 +105,13 @@
     <string name="tc4_settings_manage_files_desc">Allow the container to access Android files\nWhen using official containers, Android storage is usually at /mnt/sdcard</string>
     <string name="tc4_settings_battery_title">Battery Unrestricted</string>
     <string name="tc4_settings_battery_desc">Disable battery optimization to prevent the app from being killed by the system</string>
+    <string name="tc4_settings_x11_server_title">Termux X11 Server</string>
+    <string name="tc4_settings_x11_server_running">Running</string>
+    <string name="tc4_settings_x11_server_not_running">Not running</string>
+    <string name="tc4_settings_x11_server_start">Start</string>
+    <string name="tc4_settings_x11_server_stop">Stop</string>
+    <string name="tc4_settings_restart_audio_title">Restart Audio Server</string>
+    <string name="tc4_settings_restart_audio_desc">Restart TinyAudio client to recover sound if audio stops</string>
 
     <!-- ==================== Help Page ==================== -->
     <string name="tc4_help_source_code_title">Source Code Repository</string>
@@ -211,6 +218,8 @@
     <string name="tc4_signal9_tutorial_hint">If the above tools don\'t work, or your device is a non-AOSP HarmonyOS device, follow this tutorial (requires PC and USB cable):</string>
     <string name="tc4_signal9_tutorial_btn">Tutorial Link</string>
     <string name="tc4_signal9_dev_options_note">Enable Developer Options in Settings (usually find About Device → tap Build Number 7 times), then find "Disable child process restrictions" in Developer Options and turn it on. Steps may vary by device — search online for specifics.</string>
+    <string name="tc4_signal9_notif_title">Terminal killed (signal 9)</string>
+    <string name="tc4_signal9_notif_text">The container process was killed by the system. Tap to open NoxarTerm.</string>
 
     <!-- ==================== License Page ==================== -->
     <string name="tc4_license_title">GNU General Public License v3.0</string>

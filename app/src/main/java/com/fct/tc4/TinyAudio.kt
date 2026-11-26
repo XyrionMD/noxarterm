@@ -52,8 +52,8 @@ object TinyAudio {
      * Connects to [cacheDir]/tmp/.tiny.audio and begins receiving
      * PCM at 48000 Hz stereo via AAudio.
      *
-     * Retries every 2 seconds for up to 60 seconds if the initial
-     * connection fails.
+     * Auto-reconnects while running so audio recovers if the container-side
+     * audio server disconnects/restarts.
      */
     @Synchronized
     fun start() {
@@ -63,28 +63,23 @@ object TinyAudio {
         val socketPath = File(Global.appContext.filesDir, "tmp/.tiny.audio").absolutePath
 
         workerThread = Thread({
-            var success = false
-            val deadline = System.currentTimeMillis() + 60_000L
-
-            while (running && !success && System.currentTimeMillis() < deadline) {
-                try {
-                    success = nativeStart(socketPath)
+            while (running) {
+                val connected = try {
+                    nativeStart(socketPath)
                 } catch (_: Exception) {
-                    // nativeStart may throw if JNI not loaded
+                    false
                 }
-                if (!success && running) {
+                // nativeStart blocks while connected and returns true on disconnect;
+                // it returns false if the initial connection failed.
+                if (running) {
                     try {
-                        Thread.sleep(2000)
+                        Thread.sleep(if (connected) 1000 else 2000)
                     } catch (_: InterruptedException) {
                         break
                     }
                 }
             }
-
-            if (!success) {
-                android.util.Log.e("TinyAudio", "Failed to connect within 60s")
-            }
-        }, "TinyAudio-start").apply {
+        }, "TinyAudio-worker").apply {
             isDaemon = true
             start()
         }
@@ -97,9 +92,9 @@ object TinyAudio {
     fun stop() {
         if (!running) return
         running = false
+        nativeStop()
         workerThread?.interrupt()
         workerThread = null
-        nativeStop()
     }
 
     /* ---------- JNI load ---------- */

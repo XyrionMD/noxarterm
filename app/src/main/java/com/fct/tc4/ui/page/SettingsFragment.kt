@@ -34,8 +34,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.annotation.StringRes
 import com.fct.tc4.R
+import com.fct.tc4.TinyAudio
 import com.fct.tc4.databinding.Tc4FragmentSettingsBinding
 import com.fct.tc4.databinding.Tc4SettingsActionItemBinding
+import com.fct.tc4.databinding.Tc4SettingsServerItemBinding
 import com.fct.tc4.databinding.Tc4SettingsSwitchItemBinding
 import com.fct.tc4.ui.misc.LauncherShortcutDialogFragment
 import com.google.android.material.listitem.ListItemViewHolder
@@ -81,7 +83,12 @@ class SettingsFragment : Fragment() {
 
         adapter = SettingsListAdapter(
             onToggle = { item -> viewModel.toggle(item) },
-            onAction = { item -> handleAction(item) }
+            onAction = { item -> handleAction(item) },
+            onServerAction = { _, start ->
+                if (start) viewModel.startX11Server() else viewModel.stopX11Server()
+                binding.root.postDelayed({ viewModel.refresh() }, 800)
+                binding.root.postDelayed({ viewModel.refresh() }, 2000)
+            }
         )
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -124,7 +131,17 @@ class SettingsFragment : Fragment() {
                     }
                 )
             }
+            "restart_audio" -> {
+                TinyAudio.stop()
+                binding.root.postDelayed({ TinyAudio.start() }, 300)
+                Snackbar.make(binding.root, getString(R.string.tc4_settings_restart_audio_title), Snackbar.LENGTH_SHORT).show()
+            }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.refresh()
     }
 
     override fun onDestroyView() {
@@ -137,12 +154,14 @@ class SettingsFragment : Fragment() {
 
 private class SettingsListAdapter(
     private val onToggle: (SwitchSetting) -> Unit,
-    private val onAction: (ActionSetting) -> Unit
+    private val onAction: (ActionSetting) -> Unit,
+    private val onServerAction: (ServerControlSetting, Boolean) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
         private const val TYPE_SWITCH = 0
         private const val TYPE_ACTION = 1
+        private const val TYPE_SERVER = 2
     }
 
     private var items: List<SettingsItem> = emptyList()
@@ -164,6 +183,7 @@ private class SettingsListAdapter(
     override fun getItemViewType(position: Int): Int = when (items[position]) {
         is SwitchSetting -> TYPE_SWITCH
         is ActionSetting -> TYPE_ACTION
+        is ServerControlSetting -> TYPE_SERVER
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -177,6 +197,10 @@ private class SettingsListAdapter(
                 val b = Tc4SettingsActionItemBinding.inflate(inflater, parent, false)
                 ActionVH(b, onAction)
             }
+            TYPE_SERVER -> {
+                val b = Tc4SettingsServerItemBinding.inflate(inflater, parent, false)
+                ServerVH(b, onServerAction)
+            }
             else -> error("unknown view type: $viewType")
         }
     }
@@ -187,6 +211,7 @@ private class SettingsListAdapter(
         when (holder) {
             is SwitchVH -> holder.bind(item as SwitchSetting, position, itemCount)
             is ActionVH -> holder.bind(item as ActionSetting, position, itemCount)
+            is ServerVH -> holder.bind(item as ServerControlSetting, position, itemCount)
         }
     }
 
@@ -230,5 +255,27 @@ private class ActionVH(
         binding.itemCard.setOnClickListener {
             onAction(item)
         }
+    }
+}
+
+private class ServerVH(
+    private val binding: Tc4SettingsServerItemBinding,
+    private val onServerAction: (ServerControlSetting, Boolean) -> Unit
+) : ListItemViewHolder(binding.root) {
+
+    fun bind(item: ServerControlSetting, position: Int, itemCount: Int) {
+        super.bind(position, itemCount)
+        val ctx = itemView.context
+        binding.itemTitle.text = ctx.getString(item.titleRes)
+        val statusRes = if (item.isRunning) R.string.tc4_settings_x11_server_running else R.string.tc4_settings_x11_server_not_running
+        binding.itemStatus.text = ctx.getString(statusRes)
+        binding.itemStatusIcon.setImageResource(
+            if (item.isRunning) R.drawable.electric_bolt_24dp_eaddff_fill0_wght400_grad0_opsz24
+            else R.drawable.close_24dp_eaddff_fill0_wght400_grad0_opsz24
+        )
+        binding.btnStart.isEnabled = !item.isRunning
+        binding.btnStop.isEnabled = item.isRunning
+        binding.btnStart.setOnClickListener { onServerAction(item, true) }
+        binding.btnStop.setOnClickListener { onServerAction(item, false) }
     }
 }

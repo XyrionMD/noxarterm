@@ -18,12 +18,18 @@
 package com.fct.tc4.ui.page
 
 import android.app.Application
+import android.content.Intent
+import android.net.LocalSocket
+import android.net.LocalSocketAddress
 import androidx.annotation.StringRes
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.fct.tc4.R
+import com.fct.tc4.ui.misc.ConfigManager
 import com.fct.tc4.ui.misc.Global
+import com.termux.x11.CmdEntryPointService
+import java.io.File
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -55,6 +61,15 @@ data class ActionSetting(
     @StringRes override val descriptionRes: Int
 ) : SettingsItem()
 
+/** 服务器状态控制项（显示运行状态，提供启动/停止按钮） */
+data class ServerControlSetting(
+    override val id: String,
+    @StringRes override val titleRes: Int,
+    val isRunning: Boolean
+) : SettingsItem() {
+    override val descriptionRes: Int = 0
+}
+
 // ===================== ViewModel =====================
 
 class SettingsViewModel(
@@ -80,8 +95,61 @@ class SettingsViewModel(
         refresh()
     }
 
-    private fun refresh() {
+    fun isX11Running(): Boolean {
+        val dir = File(getApplication<Application>().filesDir, "tmp/.X11-unix")
+        val sockets = dir.listFiles()?.filter { it.name.startsWith("X") } ?: return false
+        return sockets.any { sockFile ->
+            try {
+                LocalSocket().use { s ->
+                    s.connect(LocalSocketAddress(sockFile.absolutePath, LocalSocketAddress.Namespace.FILESYSTEM))
+                    true
+                }
+            } catch (_: Exception) {
+                false
+            }
+        }
+    }
+
+    fun startX11Server() {
+        val app = getApplication<Application>()
+        val config = ConfigManager.load(code) ?: emptyMap()
+        val features = config["feature"] as? List<Map<String, Any>> ?: emptyList()
+        val x11Feature = features.firstOrNull { it["name"] == "x11" }
+        val args = (x11Feature?.get("args") as? List<*>)?.filterIsInstance<String>() ?: listOf(":0")
+        val envKeys = arrayOf(
+            "TMPDIR", "XKB_CONFIG_ROOT",
+            "TERMUX_X11_DEBUG", "TERMUX_X11_OVERRIDE_PACKAGE"
+        )
+        val envVals = arrayOf(
+            "${app.filesDir.absolutePath}/tmp",
+            "${app.dataDir.absolutePath}/$code/usr/share/X11/xkb",
+            "1",
+            app.packageName
+        )
+        app.startService(Intent(app, CmdEntryPointService::class.java).apply {
+            action = CmdEntryPointService.ACTION_START
+            putExtra(CmdEntryPointService.EXTRA_ARGS, args.toTypedArray())
+            putExtra(CmdEntryPointService.EXTRA_ENV_KEYS, envKeys)
+            putExtra(CmdEntryPointService.EXTRA_ENV_VALUES, envVals)
+        })
+        refresh()
+    }
+
+    fun stopX11Server() {
+        val app = getApplication<Application>()
+        app.startService(Intent(app, CmdEntryPointService::class.java).apply {
+            action = CmdEntryPointService.ACTION_STOP
+        })
+        refresh()
+    }
+
+    fun refresh() {
         _items.value = listOf(
+            ServerControlSetting(
+                id = "x11_server",
+                titleRes = R.string.tc4_settings_x11_server_title,
+                isRunning = isX11Running()
+            ),
             ActionSetting(
                 id = "launcher_shortcut",
                 titleRes = R.string.tc4_settings_shortcut_title,
@@ -126,6 +194,11 @@ class SettingsViewModel(
                 id = "battery_unlimited",
                 titleRes = R.string.tc4_settings_battery_title,
                 descriptionRes = R.string.tc4_settings_battery_desc
+            ),
+            ActionSetting(
+                id = "restart_audio",
+                titleRes = R.string.tc4_settings_restart_audio_title,
+                descriptionRes = R.string.tc4_settings_restart_audio_desc
             )
         )
     }
