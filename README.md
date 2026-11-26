@@ -24,6 +24,10 @@ NoxarTerm Remastered is a specialized fork of [Tiny Container](https://github.co
 > **Do NOT install NoxarTerm Remastered together with the original Tiny Container.**
 > Both apps use the same package name, data directory, and container paths. Installing them side-by-side will cause conflicts, corrupted containers, and crashes. Please uninstall the original Tiny Container first before installing NoxarTerm Remastered.
 
+> [!IMPORTANT]
+> **Upgrading from an older NoxarTerm (for example v1.1.0) to v1.2.0?**
+> v1.2.0 has a **different signing signature** and adds new native/Gradle libraries, so an in-place update will fail with a signature conflict. **Uninstall the old NoxarTerm first, then install v1.2.0.** Uninstalling deletes the app's private data and container files, so **back up everything important first** — rootfs images, configs, container data, and launcher shortcuts. Files saved in shared Android storage are usually unaffected, but back those up too if you're unsure.
+
 ---
 
 ## ✨ What’s Different in Remastered?
@@ -98,11 +102,12 @@ Explore the new look and feel of NoxarTerm Remastered:
 
 ### Installation
 
-1. **Uninstall the original Tiny Container** if you have it installed. Do not keep both apps, they will conflict.
-2. Download the latest `.apk` from the [Releases](../../releases) section.
-3. Enable **"Install from Unknown Sources"** in your Android device settings.
-4. Install the APK and launch **NoxarTerm Remastered**.
-5. **Pick your rootfs:** Download Debian from Tiny Container, then import it via the import button in the app.
+1. **Back up your data first.** Uninstalling the old app permanently removes its private data and container files.
+2. **Uninstall any older NoxarTerm build (including v1.1.0).** v1.2.0 uses a different signature and extra libraries, so updating directly will fail with a signature mismatch. Also uninstall the original Tiny Container if present — see the warnings above.
+3. Download the latest `.apk` from the [Releases](../../releases) section.
+4. Enable **"Install from Unknown Sources"** in your Android device settings.
+5. Install the APK and launch **NoxarTerm Remastered**.
+6. **Pick your rootfs:** Download Debian from Tiny Container, then import it via the import button in the app.
 
 ### Installing a Rootfs
 
